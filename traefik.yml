@@ -82,7 +82,7 @@ services:
         - traefik.http.routers.api.tls.certresolver=letsencrypt
         # middlewares: use IP whitelisting, ratelimit and basic authentication
         - traefik.http.routers.api.middlewares=api-ipwhitelist,traefik-ratelimit,api-auth
-        - traefik.http.middlewares.api-auth.basicauth.users={$TRAEFIK_ADMINS?Variable not set}
+        - traefik.http.middlewares.api-auth.basicauth.users={$USERNAME$TRAEFIK_ADMINS?Variable not set}
         # whitelist your public ip, see https://icanhazip.com
         # replace with _your IP_
         - traefik.http.middlewares.api-ipwhitelist.ipwhitelist.sourcerange=${WHITELIST_IP?Variable not set}
