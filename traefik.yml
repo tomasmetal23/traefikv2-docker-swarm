@@ -30,9 +30,27 @@ services:
       - proxy
     deploy:
       labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.api.rule=Host(`traefik.hemera.nix`)"
-        - "traefik.http.routers.api.service=api@internal" # Let the dashboard access the traefik api
+        ## DNS CHALLENGE
+      - "traefik.http.routers.traefik.tls.certresolver=lets-encr"
+      - "traefik.http.routers.traefik.tls.domains[0].main=*.$MY_DOMAIN"
+      - "traefik.http.routers.traefik.tls.domains[0].sans=$MY_DOMAIN"
+      ## HTTP REDIRECT
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.redirect-https.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirect-https.entrypoints=web"
+      - "traefik.http.routers.redirect-https.middlewares=redirect-to-https"
+      ## triying to make work dashboard
+      - "traefik.http.routers.traefik.rule=Host(`monitor.$MY_DOMAIN`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.middlewares=authtraefik"
+      - "traefik.http.middlewares.authtraefik.basicauth.users=$MY_USER"
+      - "traefik.http.routers.app-secure.middlewares=sslheader@docker"
+      - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
+      ##WEBSOCKET CONNECTIONS ENABLE
+      - "traefik.http.routers.delivery.rule=Host(`delivery.$MY_DOMAIN`)"
+      - "traefik.http.routers.delivery.tls.certresolver=secure"
+      - "traefik.http.routers.delivery.middlewares=sslheader"
 
 networks:
   proxy:
