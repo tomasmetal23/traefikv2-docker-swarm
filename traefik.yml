@@ -5,6 +5,9 @@ services:
     image: traefik:latest
     restart: always
     container_name: traefik
+    hostname: "traefik"
+    env_file:
+      - .env
     ports:
       - "80:80"
       - "8080:8080" # traefik dashboard
