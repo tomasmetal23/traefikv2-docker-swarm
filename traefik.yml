@@ -24,7 +24,7 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.web-secured.address=:443
       - --certificatesresolvers.mytlschallenge.acme.httpChallenge.entrypoint=web
-      - --certificatesresolvers.mytlschallenge.acme.email=tomas@saiyans.com.ve
+      - --certificatesresolvers.mytlschallenge.acme.email=$SSL_EMAIL
       - --certificatesresolvers.mytlschallenge.acme.storage=/letsencrypt/acme.json
     volumes:
       - letsencrypt:/letsencrypt
